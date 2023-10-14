@@ -3,6 +3,7 @@ var router = express.Router();
 var authenticate = require('../models/authen');
 var display_products = require('../models/display_table');
 var crud = require('../models/db_crud');
+var select_options_form = require('../models/select_options_form');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.render('users', {title: "User Page"});
@@ -24,6 +25,7 @@ router.post('/login', async function(req, res, next) {
   let pass_word = req.body.pword;
   req.session.user_name = user_name;
   auth_result = await authenticate(user_name, pass_word);
+  req.session.shop = auth_result.shop;
   if (auth_result.auth) {
     if (auth_result.shop == 'director') {
       res.redirect('/users/director');
@@ -39,9 +41,10 @@ router.post('/login', async function(req, res, next) {
 /* GET users/profile. */
 router.get('/profile', async function(req, res, next) {
   let user_name = req.session.user_name;
+  let shop = req.session.shop;
   // console.log(req.session.user_name);
   if (user_name) {
-    let table_html = await display_products("products", user_name);
+    let table_html = await display_products("products", user_name, shop);
   res.render('profile', {title: "Profile Page", product_table: table_html});
   }
   else {
@@ -59,10 +62,15 @@ router.post('/crud', async function(req, res, next) {
 /* GET /users/director. */
 router.get('/director', async function(req, res, next) {
   let user_name = req.session.user_name;
-  // console.log(req.session.user_name);
+  let shop = req.session.shop;
+  let select_html = await select_options_form();
+
   if (user_name) {
-    // let table_html = await display_products("products", user_name);
-  res.render('director', {title: "Director Page"});
+    let table_html = await display_products("products", user_name, shop);
+  res.render('director', {
+    title: "Director Page", 
+    product_table: table_html, 
+    select_form: select_html});
   }
   else {
     res.redirect('/users/login');
