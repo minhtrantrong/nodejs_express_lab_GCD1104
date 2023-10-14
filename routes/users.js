@@ -23,9 +23,13 @@ router.post('/login', async function(req, res, next) {
   let user_name = req.body.uname;
   let pass_word = req.body.pword;
   req.session.user_name = user_name;
-
-  if (await authenticate(user_name, pass_word)) {
-    res.redirect('/users/profile');
+  auth_result = await authenticate(user_name, pass_word);
+  if (auth_result.auth) {
+    if (auth_result.shop == 'director') {
+      res.redirect('/users/director');
+    } else {
+      res.redirect('/users/profile');
+    } 
   }
   else {
     res.render('login', {title: "Login Page", message: "Wrong username or password, please try again"})
@@ -50,5 +54,18 @@ router.post('/crud', async function(req, res, next) {
   // Call a function to query CRUD
   await crud(body);
   res.redirect('/users/profile');
+});
+
+/* GET /users/director. */
+router.get('/director', async function(req, res, next) {
+  let user_name = req.session.user_name;
+  // console.log(req.session.user_name);
+  if (user_name) {
+    // let table_html = await display_products("products", user_name);
+  res.render('director', {title: "Director Page"});
+  }
+  else {
+    res.redirect('/users/login');
+  }
 });
 module.exports = router;
