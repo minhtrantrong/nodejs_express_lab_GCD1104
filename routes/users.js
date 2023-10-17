@@ -64,14 +64,21 @@ router.post('/crud', async function(req, res, next) {
 router.get('/director', async function(req, res, next) {
   let user_name = req.session.user_name;
   let shop = req.session.shop;
-  // req.session.refresh_time = 5000;
+  let shop_id = (req.session.shop_selected)? req.session.shop_selected : 0;
+  console.log(`shop id: ${shop_id}`);
+  // check interval time in session
+  let interval = 5000;
+  if (req.session.interval) {
+    interval = req.session.interval*1000;
+  }
   let select_html = await select_options_form();
   if (user_name) {
-    let table_html = await display_products("products", user_name, shop, 0);
+    let table_html = await display_products("products", user_name, shop, shop_id);
   res.render('director', {
     title: "Director Page", 
     product_table: table_html, 
-    select_form: select_html});
+    select_form: select_html, 
+    interval: interval});
   }
   else {
     res.redirect('/users/login');
@@ -80,19 +87,13 @@ router.get('/director', async function(req, res, next) {
 
 /* Route for select shop, POST */ 
 router.post('/director', async function(req, res, next) {
-  let user_name = req.session.user_name;
-  let shop = req.session.shop;
-  let shop_id = req.body.shop_selected;
-  let select_html = await select_options_form();
-  let table_html = await display_products(
-        "products", 
-        user_name, 
-        shop, 
-        shop_id);
-  res.render('director', {
-    title: "Director Page", 
-    product_table: table_html, 
-    select_form: select_html});
+  req.session.shop_selected = req.body.shop_selected;
+  res.redirect('/users/director')
+});
+/* Route for select refreshtime, POST */ 
+router.post('/refreshtime', async function(req, res, next) {
+  req.session.interval = req.body.interval;
+  res.redirect('/users/director');
 });
 
 module.exports = router;

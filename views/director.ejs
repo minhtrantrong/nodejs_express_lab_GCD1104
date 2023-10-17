@@ -5,11 +5,11 @@
     <script>
       setTimeout(function(){
       window.location.reload(1);
-      }, 5000);
+      }, <%= interval %>);
     </script>
   </head>
   <body>
-    <form> 
+    <form action="/users/refreshtime" method="post"> 
       Update interval (in seconds): 
       <select name="interval">
         <option value=5 selected>5</option> 
