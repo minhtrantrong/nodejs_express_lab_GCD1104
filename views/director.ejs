@@ -2,6 +2,33 @@
 <html>
   <head>
     <title><%= title %></title>
+    
+    <form> 
+      Update interval (in seconds): 
+      <select name="interval" id="interval" onchange="() => { 
+        document.cookie = 'refresh_time = ' + this.options[this.selectedIndex].value*1000 
+        }">
+        <option value=5 selected>5</option> 
+        <option value=10>10</option> 
+        <option value=15>15</option> 
+        <option value=20>20</option> 
+      </select> 
+    </form>
+    <script language="javascript">
+      function getCookie(name) 
+      {
+        const regex = new RegExp(`(^| )${name}=([^;]+)`);
+        const match = document.cookie.match(regex);
+        if (match) {
+          return match[2]
+        } else { return 7000;}
+      }
+
+      let refresh_time = getCookie("refresh_time");
+      setTimeout(function(){
+         window.location.reload(1);
+      }, refresh_time);
+    </script>
   </head>
   <body>
     <h1><%= title %></h1>

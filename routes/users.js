@@ -23,6 +23,7 @@ router.get('/logout', function(req, res, next) {
 router.post('/login', async function(req, res, next) {
   let user_name = req.body.uname;
   let pass_word = req.body.pword;
+  req.session.refresh_time = 5000;
   req.session.user_name = user_name;
   auth_result = await authenticate(user_name, pass_word);
   req.session.shop = auth_result.shop;
@@ -63,8 +64,8 @@ router.post('/crud', async function(req, res, next) {
 router.get('/director', async function(req, res, next) {
   let user_name = req.session.user_name;
   let shop = req.session.shop;
+  // req.session.refresh_time = 5000;
   let select_html = await select_options_form();
-
   if (user_name) {
     let table_html = await display_products("products", user_name, shop);
   res.render('director', {

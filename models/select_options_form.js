@@ -17,6 +17,7 @@ async function select_options_form() {
         html_form += `<option value=${row.id}> ${row.name} </option>`;
     }
     html_form += `</select><input type="submit" value="Submit"></form>`;
+    client.end();
     return html_form;
 }
 
