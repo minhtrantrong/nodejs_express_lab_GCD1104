@@ -1,14 +1,22 @@
 var {Client}  = require('pg'); 
 var conn_string = require('./pg_config');
 
-async function table_display(table_name, user_name, role) {
+async function table_display(table_name, user_name, role, shop_id) {
     // Connect to DB
     const client = new Client(conn_string);
     await client.connect(); 
     var query_string ="";
     // Query to DB and get the products table 
     if (role == "director") {
-        query_string = `SELECT * FROM  ${table_name}`;
+        if (shop_id == 0) {
+            query_string = `SELECT * FROM  ${table_name}`;
+        } else {
+            query_string = {
+                text: `SELECT * FROM  ${table_name} WHERE shop = 
+                    (SELECT name FROM shops WHERE id = $1)`,
+                values: [shop_id],
+            };
+        }
     } else {
         query_string = {
             text: `SELECT * FROM  ${table_name} WHERE shop = 

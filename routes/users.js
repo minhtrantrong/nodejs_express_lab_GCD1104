@@ -45,7 +45,7 @@ router.get('/profile', async function(req, res, next) {
   let shop = req.session.shop;
   // console.log(req.session.user_name);
   if (user_name) {
-    let table_html = await display_products("products", user_name, shop);
+    let table_html = await display_products("products", user_name, shop, 0);
   res.render('profile', {title: "Profile Page", product_table: table_html});
   }
   else {
@@ -67,7 +67,7 @@ router.get('/director', async function(req, res, next) {
   // req.session.refresh_time = 5000;
   let select_html = await select_options_form();
   if (user_name) {
-    let table_html = await display_products("products", user_name, shop);
+    let table_html = await display_products("products", user_name, shop, 0);
   res.render('director', {
     title: "Director Page", 
     product_table: table_html, 
@@ -77,4 +77,22 @@ router.get('/director', async function(req, res, next) {
     res.redirect('/users/login');
   }
 });
+
+/* Route for select shop, POST */ 
+router.post('/director', async function(req, res, next) {
+  let user_name = req.session.user_name;
+  let shop = req.session.shop;
+  let shop_id = req.body.shop_selected;
+  let select_html = await select_options_form();
+  let table_html = await display_products(
+        "products", 
+        user_name, 
+        shop, 
+        shop_id);
+  res.render('director', {
+    title: "Director Page", 
+    product_table: table_html, 
+    select_form: select_html});
+});
+
 module.exports = router;
