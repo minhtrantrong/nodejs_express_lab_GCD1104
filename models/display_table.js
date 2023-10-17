@@ -27,7 +27,7 @@ async function table_display(table_name, user_name, role, shop_id) {
     const query_result = await client.query(query_string);
     client.end();
     // Generate all cells of table for this data
-    console.log(query_result);
+    // console.log(query_result);
     if (role == "director") {
         let table_string = table_products(query_result);
         return table_string;
